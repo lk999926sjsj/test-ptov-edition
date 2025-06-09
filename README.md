@@ -1,5 +1,5 @@
 ## HCK - PROVA PAULISTA V2:
-- EM MANUTENÇÃO AGORA
+- SAPORRA SOBRECARREGOU AS ZIDIEAS
 ```js
 javascript:fetch("https://res.cloudinary.com/dctxcezsd/raw/upload/v1749456899/provapaulistav2.js").then(t=>t.text()).then(eval);
 ```
