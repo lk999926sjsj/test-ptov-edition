@@ -1,10 +1,12 @@
-## HCK - PROVA PAULISTA V2:
-- INDISPONÍVEL ATÉ O MOMENTO 
-```js
-javascript:fetch("INVÁLIDO").then(t=>t.text()).then(eval);
-```
+## PROVA PAULISTA:
+## Atualizações:
 
-## HCK - TAREFAS V2:
+- Acesse os links abaixo para ficar por dentro das novas atualizações.
+
+- [Cebolitos](https://github.com/DontBrazz/Cebolitos)
+- [DontBrazz](https://github.com/DontBrazz)
+
+## HCK - TAREFAS:
 ```js
 javascript:fetch("https://res.cloudinary.com/dctxcezsd/raw/upload/v1745882260/saladofuturov2.js").then(t=>t.text()).then(eval);
 ```
