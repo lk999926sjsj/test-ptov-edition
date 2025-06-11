@@ -4,7 +4,6 @@
 
 - **Acesse os links abaixo para ficar por dentro das novas atualizações.**
 
-- [Cebolitos](https://www.cebolitos.cloud/)
 - [Repositório](https://github.com/DontBrazz/Cebolitos)
 - [DontBrazz](https://github.com/DontBrazz)
 
