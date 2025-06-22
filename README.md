@@ -1,4 +1,4 @@
-// bookmarklet.js - Script para criar uma caixa flutuante de chat AI
+// bookmarklet.js - Script para criar uma caixa flutuante com um iframe de chat
 
 (function() {
     // Carrega Tailwind CSS dinamicamente
@@ -20,14 +20,16 @@
         // 1. Cria o elemento principal do widget
         const widget = document.createElement('div');
         widget.id = 'ai-chat-widget';
-        widget.className = 'fixed top-1/4 left-1/2 -translate-x-1/2 bg-gray-800 text-white rounded-lg shadow-2xl z-[9999] w-80 md:w-96 overflow-hidden flex flex-col resize-x'; // Added resize-x for horizontal resizing
-        widget.style.minWidth = '280px';
-        widget.style.minHeight = '200px'; // Changed to minHeight
-        widget.style.maxHeight = '80vh'; // Added maxHeight to limit vertical expansion
+        widget.className = 'fixed top-1/4 left-1/2 -translate-x-1/2 bg-gray-800 text-white rounded-lg shadow-2xl z-[9999] w-80 md:w-96 overflow-hidden flex flex-col resize-x resize-y'; // Added resize-x and resize-y for resizing in both directions
+        widget.style.minWidth = '300px';
+        widget.style.minHeight = '300px';
+        widget.style.maxHeight = '90vh'; // Added maxHeight to limit vertical expansion
         widget.style.maxWidth = '90vw'; // Added maxWidth for horizontal expansion
         widget.style.cursor = 'grab'; // Indicate it's draggable
         widget.style.display = 'flex'; // Ensure flexbox for layout
         widget.style.flexDirection = 'column'; // Stack elements vertically
+        widget.style.setProperty('--tw-shadow', '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05)');
+
 
         // 2. Cria o cabeçalho do widget
         const header = document.createElement('div');
@@ -45,30 +47,14 @@
         `;
         widget.appendChild(header);
 
-        // 3. Cria o corpo do widget (conteúdo do chat)
+        // 3. Cria o corpo do widget (iframe de chat)
         const body = document.createElement('div');
         body.id = 'ai-chat-body';
-        body.className = 'flex-grow p-4 flex flex-col space-y-4 overflow-y-auto'; // Use flex-grow and overflow-y-auto
+        body.className = 'flex-grow p-0 flex flex-col overflow-hidden'; // flex-grow para ocupar o espaço restante
         body.innerHTML = `
-            <div class="flex-grow flex flex-col space-y-2">
-                <label for="question-input" class="text-sm font-semibold">Sua Questão:</label>
-                <textarea id="question-input"
-                          class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 text-sm resize-y"
-                          rows="4"
-                          placeholder="Digite sua pergunta aqui..."></textarea>
-                <button id="send-btn"
-                        class="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75">
-                    Enviar
-                </button>
-            </div>
-            <div class="flex-grow flex flex-col space-y-2 mt-4 border-t border-gray-700 pt-4">
-                <label for="answer-output" class="text-sm font-semibold">Resposta da IA:</label>
-                <div id="answer-output"
-                     class="w-full p-2 rounded-md bg-gray-700 border border-gray-600 text-sm overflow-y-auto h-32 md:h-48">
-                    <!-- Respostas da IA aparecerão aqui -->
-                </div>
-                <div id="loading-indicator" class="text-blue-400 text-sm hidden">Gerando resposta...</div>
-            </div>
+            <iframe id="chat-iframe"
+                    src="" <!-- COLOQUE O LINK DO SEU SITE DE CHAT GPT AQUI -->
+                    class="w-full h-full border-0 rounded-b-lg"></iframe>
         `;
         widget.appendChild(body);
 
@@ -77,10 +63,12 @@
         // Referências aos elementos
         const minimizeBtn = document.getElementById('minimize-btn');
         const closeBtn = document.getElementById('close-btn');
-        const questionInput = document.getElementById('question-input');
-        const sendBtn = document.getElementById('send-btn');
-        const answerOutput = document.getElementById('answer-output');
-        const loadingIndicator = document.getElementById('loading-indicator');
+        const chatIframe = document.getElementById('chat-iframe'); // Referência ao iframe
+
+        // ATENÇÃO: COLOQUE O LINK DO SEU SITE DE CHAT GPT AQUI
+        // Exemplo: chatIframe.src = "https://chat.openai.com/";
+        // Verifique se o site permite ser embedado em um iframe (alguns sites podem bloquear por segurança).
+        chatIframe.src = "https://gemini.google.com/"; // Exemplo padrão, mude para o que desejar.
 
         let isDragging = false;
         let offset = { x: 0, y: 0 };
@@ -100,8 +88,8 @@
             if (!isDragging) return;
             widget.style.left = (e.clientX - offset.x) + 'px';
             widget.style.top = (e.clientY - offset.y) + 'px';
-            widget.style.right = 'auto'; // Disable auto positioning for right/bottom
-            widget.style.bottom = 'auto'; // Disable auto positioning for right/bottom
+            widget.style.right = 'auto'; // Desabilita o posicionamento automático para direita/inferior
+            widget.style.bottom = 'auto'; // Desabilita o posicionamento automático para direita/inferior
         });
 
         document.addEventListener('mouseup', () => {
@@ -114,72 +102,24 @@
             isMinimized = !isMinimized;
             if (isMinimized) {
                 body.style.display = 'none';
-                widget.style.height = `${header.offsetHeight}px`; // Collapse to header height
-                widget.style.maxHeight = 'none'; // Allow collapsing below max height
-                widget.style.width = '280px'; // Set a fixed width when minimized
+                widget.style.height = `${header.offsetHeight}px`; // Colapsa para a altura do cabeçalho
+                widget.style.maxHeight = 'none'; // Permite colapsar abaixo da altura máxima
+                widget.style.width = '280px'; // Define uma largura fixa quando minimizado
                 widget.style.minWidth = '280px';
-                widget.classList.remove('resize-x'); // Remove resize when minimized
+                widget.classList.remove('resize-x', 'resize-y'); // Remove resize quando minimizado
             } else {
                 body.style.display = 'flex';
-                widget.style.height = ''; // Restore auto height
-                widget.style.maxHeight = '80vh'; // Restore max height
-                widget.style.width = ''; // Restore auto width
-                widget.style.minWidth = '280px';
-                widget.classList.add('resize-x'); // Add resize back
+                widget.style.height = ''; // Restaura a altura automática
+                widget.style.maxHeight = '80vh'; // Restaura a altura máxima
+                widget.style.width = ''; // Restaura a largura automática
+                widget.style.minWidth = '300px';
+                widget.classList.add('resize-x', 'resize-y'); // Adiciona o resize de volta
             }
         });
 
         // Função para fechar o widget
         closeBtn.addEventListener('click', () => {
             widget.remove();
-        });
-
-        // Função para enviar a pergunta para o modelo AI
-        sendBtn.addEventListener('click', async () => {
-            const prompt = questionInput.value.trim();
-            if (!prompt) {
-                answerOutput.innerHTML = '<p class="text-red-400">Por favor, digite sua pergunta.</p>';
-                return;
-            }
-
-            answerOutput.innerHTML = ''; // Limpa a resposta anterior
-            loadingIndicator.classList.remove('hidden'); // Mostra o indicador de carregamento
-            sendBtn.disabled = true; // Desabilita o botão enquanto carrega
-
-            try {
-                let chatHistory = [];
-                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
-                const payload = { contents: chatHistory };
-                // ATENÇÃO: Para usar modelos diferentes de gemini-2.0-flash,
-                // você precisará de uma chave de API válida.
-                // Para produção, considere usar um proxy para proteger sua chave de API.
-                const apiKey = ""; // <--- Sua chave de API aqui (ou deixe vazio para o ambiente Canvas)
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    answerOutput.innerHTML = `<p>${text.replace(/\n/g, '<br>')}</p>`; // Exibe a resposta
-                } else {
-                    console.error("Estrutura de resposta inesperada ou conteúdo ausente:", result);
-                    answerOutput.innerHTML = '<p class="text-red-400">Erro ao obter resposta da IA. Verifique a chave da API ou a resposta do servidor.</p>';
-                }
-            } catch (error) {
-                console.error("Erro ao chamar a API Gemini:", error);
-                answerOutput.innerHTML = `<p class="text-red-400">Ocorreu um erro: ${error.message}.</p>`;
-            } finally {
-                loadingIndicator.classList.add('hidden'); // Esconde o indicador de carregamento
-                sendBtn.disabled = false; // Habilita o botão novamente
-            }
         });
 
         // Posiciona o widget no centro da tela e ajusta para o viewport se necessário
@@ -198,7 +138,6 @@
         window.addEventListener('resize', adjustWidgetPosition);
 
         // Centraliza o widget na tela (opcional, pois o CSS já faz um pouco disso)
-        // Isso recalcula a posição no caso de o viewport mudar de tamanho
         widget.style.top = `${(window.innerHeight - widget.offsetHeight) / 2}px`;
         widget.style.left = `${(window.innerWidth - widget.offsetWidth) / 2}px`;
 
@@ -207,14 +146,17 @@
             for (let entry of entries) {
                 if (entry.target === widget) {
                     // console.log(`Widget resized to ${entry.contentRect.width}x${entry.contentRect.height}`);
-                    // Ensure body also resizes with the widget
+                    // Garante que o corpo do widget e o iframe também se redimensionem
+                    body.style.width = `${entry.contentRect.width}px`;
                     body.style.height = `${entry.contentRect.height - header.offsetHeight}px`;
+                    chatIframe.style.width = '100%';
+                    chatIframe.style.height = '100%';
                 }
             }
         });
         resizeObserver.observe(widget);
 
-        console.log("Widget de chat AI criado e inicializado.");
+        console.log("Widget de chat AI com iframe criado e inicializado.");
     };
 
     // Verifica se Tailwind já carregou, senão espera
@@ -229,3 +171,4 @@
         }, 100); // Checa a cada 100ms
     }
 })();
+
